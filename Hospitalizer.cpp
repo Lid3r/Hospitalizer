@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {/*
-	vector<Cl::Patient> patients;
+	vector<jb::Patient> patients;
 	read_data("Patients.txt", patients);
 	
 	bool breaker = true;

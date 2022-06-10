@@ -9,10 +9,10 @@ using namespace std;
 namespace jb {
 	class Datetime {
 		string date;
-		int hs;
-		int ms;
-		int hf;
-		int mf;
+		int hourStart;
+		int minuteStart;
+		int hourFinish;
+		int minuteFinish;
 		//Format of DD/MM/YYYY HH:MM or H:MM. Each appointment takes about 30 mins.
 	public:
 
@@ -42,21 +42,21 @@ namespace jb {
 
 			if (m >= 30) {
 				//If 30-minute appointment starts on XX:30 or more, increment hour and modulo the resulting minutes
-				hf = h + 1;
-				mf = (m + 30) % 60;
+				hourFinish = h + 1;
+				minuteFinish = (m + 30) % 60;
 			}
 			else {
-				hf = h;
-				mf = m + 30;
+				hourFinish = h;
+				minuteFinish = m + 30;
 			}
 			date = d;
-			hs = h;
-			ms = m;
+			hourStart = h;
+			minuteStart = m;
 		}
 
 		void print() {
-			cout << "Starts: " << hs << ":" << ms << endl;
-			cout << "Ends: " << hf << ":" << mf << endl;
+			cout << "Starts: " << hourStart << ":" << minuteStart << endl;
+			cout << "Ends: " << hourFinish << ":" << minuteFinish << endl;
 		}
 
 		bool checker(int h1, int h2, int m1, int m2) {
@@ -64,6 +64,7 @@ namespace jb {
 			int t1 = h1 * 60 + m1; //end time in minutes
 			int t2 = h2 * 60 + m2; //start time in minutes
 
+			//Absolute difference between the 2 times must be >= 30
 			if (abs(t1 - t2) < 30) {
 				return true;
 			}
@@ -73,8 +74,8 @@ namespace jb {
 		}
 
 		bool operator == (const Datetime& app) noexcept {
-			//Check if the appointment times don't overlap with another appointment with the same doc
-			return date == app.date && checker(hf, app.hs, mf, app.ms);
+			//Check if the appointment times don't overlap with another appointment (with the same doc for example);
+			return date == app.date && checker(hourFinish, app.hourStart, minuteFinish, app.minuteStart);
 		}
 	};
 }

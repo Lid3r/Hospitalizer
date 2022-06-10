@@ -5,6 +5,8 @@
 #include <limits>
 #include <fstream>
 
+#include "Patient.h"
+
 using namespace std;
 
 vector<string> split(string line) {
@@ -24,7 +26,7 @@ vector<string> split(string line) {
 
 
 
-void read_data(string name, vector<Cl::Patient>& patients) {
+void read_data(string name, vector<jb::Patient>& patients) {
 	ifstream input;
 	string line;
 	input.open(name);
@@ -38,7 +40,7 @@ void read_data(string name, vector<Cl::Patient>& patients) {
 		while (getline(input, line)) {
 			out = split(line);
 
-			patients.push_back(Cl::Patient(out[0], out[1], stoi(out[2], nullptr), out[3], stoll(out[4], nullptr), out[5], out[6]));
+			patients.push_back(jb::Patient(out[0], out[3], stoi(out[2], nullptr), out[5], jb::Pesel(out[5])));
 		}
 		
 	}

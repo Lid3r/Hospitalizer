@@ -1,9 +1,8 @@
 #pragma once
-#include "Classes.h"
 #include <string>
 #include <vector>
 
-void read_data(string name, vector<Cl::Patient> &patients);
+void read_data(string name, vector<jb::Patient> &patients);
 
 void menu(bool &breaker);
 

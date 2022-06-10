@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
+#include "Exceptions.h"
 using namespace std;
 
 namespace jb{
+
 class Pesel {
 	string pesel;
 

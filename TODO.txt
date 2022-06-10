@@ -1,3 +1,8 @@
+Patient :
+Name Surname, Phone number, Age, Address, PESEL number
+
+
+
 LOGIC LOGIC LOGIC
 Dr can't be in 2 places at once
 Patient can't have 2 appointments overlaping
