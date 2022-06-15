@@ -12,19 +12,28 @@ namespace jb {
 		int Age;
 
 	public:
-		Person(const string& name, const string& phone, const int& age) : Name(name), Phone_number(phone), Age(age) {
-			//Untested!
-			if (name.find_first_of("0123456789") != string::npos) {
-				throw personNameException();
-			}
-			
+		Person(const string& name, const string& phone, const int age) : Name(name), Phone_number(phone), Age(age) {
 			if (phone.length() != 9) {
 				throw personPhoneException();
+			}
+
+			if (isNumeric(name)) {
+				throw personNameException();
 			}
 
 			if (age < 0) {
 				throw personAgeException();
 			}
+		}
+
+		//Check if string contains numbers
+		bool isNumeric(string const& str)
+		{
+			auto it = find_if(str.begin(), str.end(), [](char const& c) {
+				return !isdigit(c);
+			});
+
+			return !str.empty() && it == str.end();
 		}
 	};
 }

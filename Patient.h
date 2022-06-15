@@ -14,11 +14,11 @@ namespace jb {
 
 
 	public:
-		Patient(const string& name, const string& phone, const int age, const string& add, const jb::Pesel& pesel) : Person(name, phone, age), Adress(add), PESEL(pesel){
-			
+		Patient(const string& name, const string& phone, const int age, const string& add, const jb::Pesel& pesel) : Person(name, phone, age), Adress(add), PESEL(pesel) {
+
 		}
-		
-		
+
+
 		//GETTERS
 		string gName() {
 			return Person::Name;

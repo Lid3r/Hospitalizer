@@ -3,43 +3,45 @@
 #include "Exceptions.h"
 using namespace std;
 
-namespace jb{
+namespace jb {
 
-class Pesel {
-	string pesel;
+	class Pesel {
+		string pesel;
 
-	const static uint8_t w[]; //Checksum
-public:
-	Pesel(const string& pesel) {
+		const uint8_t w[11] = { 1, 3, 7, 9, 1, 3, 7, 9, 1, 3, 1 };
 
-		//Correct length
-		if (pesel.length() != 11) {
-			throw invalid_argument("PESEL doesn't have the correct length");
-		}
+		//Checksum
+	public:
+		Pesel(const string& pesel) {
 
-		//No letters
-		for (const auto c : pesel) {
-			if (c < '0' || c > '9') {
-				throw invalid_argument("Incorrect character in PESEL");
+			//Correct length
+			if (pesel.length() != 11) {
+				throw peselLengthException();
 			}
+
+			//No letters
+			for (const auto c : pesel) {
+				if (c < '0' || c > '9') {
+					throw peselLettersException();
+				}
+			}
+			uint16_t sum = 0;
+			//checksum checking
+			for (size_t i = 0; i < pesel.size(); ++i) {
+				sum += (pesel[i] - '0') * w[i];
+			}
+
+			if (sum % 10) {
+				throw peselChecksumException();
+			}
+
+			Pesel::pesel = pesel;
 		}
-		uint16_t sum = 0;
-		//checksum checking
-		for (size_t i = 0; i < pesel.size(); ++i) {
-			sum += (pesel[i] - '0') * w[i];
+
+		string print() const {
+			return pesel;
 		}
+	};
 
-		if (sum % 10) {
-			throw invalid_argument("PESEL checksum incorrect");
-		}
-
-		Pesel::pesel = pesel;
-	}
-
-	string print() const {
-		return pesel;
-	}
-};
-
-const uint8_t Pesel::w[] = { 1, 3, 7, 9, 1, 3, 7, 9, 1, 3, 1 };
+	
 }

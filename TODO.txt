@@ -1,6 +1,8 @@
 Patient :
-Name Surname, Phone number, Age, Address, PESEL number
+String Name Surname, String Phone number, int Age, String Address, PESEL number
 
+Doctor:
+String Name Surname, String Phone number, int Age, String specialization
 
 
 LOGIC LOGIC LOGIC
