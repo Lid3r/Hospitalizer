@@ -41,7 +41,16 @@ namespace jb {
 		string print() const {
 			return pesel;
 		}
+
+		bool operator == (const Pesel& pes) noexcept {
+			return pesel == pes.pesel;
+		}
 	};
+
+	inline ostream& operator << (ostream& out, Pesel& pesel) {
+		out << pesel.print();
+		return out;
+	}
 
 	
 }

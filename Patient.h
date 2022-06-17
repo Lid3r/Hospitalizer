@@ -45,4 +45,9 @@ namespace jb {
 			cout << Name << ", " << Phone_number << ", " << Age << ", " << Adress << ", " << PESEL.print() << endl;
 		}
 	};
+
+	inline ostream& operator << (ostream& out, Patient& p) {
+		out << p.gName() << ", " << p.gPhone() << ", " << p.gAdd() << ", " << p.gPesel().print() << endl;
+		return out;
+	}
 }

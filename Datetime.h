@@ -19,6 +19,8 @@ namespace jb {
 		Datetime(const string& d, const string& s) {
 			//we assume the clinic is running from 8:00-20:00
 
+			//I'll think about wrong date logic
+
 			int h, m;
 			if (s.length() == 5) {
 				h = stoi(s.substr(0, 2));
