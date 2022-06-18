@@ -2,3 +2,5 @@ Jan Kowalski, 879237912, 3, Zielona 2137, 81100216357
 Jan Jebanski, 123231143, 420, Smonk 420, 90090515836
 Krzychu Ziobro, 420420420, 2137, Papiezowa 0, 81100216357
 Krzychu Ziobro, 202020202, 2137, Papiezowa 0, 81100216357
+Jan Krzysztowski, 678543212, 21, Kulonska 23, 81100216357
+

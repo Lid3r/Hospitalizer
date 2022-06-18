@@ -1,7 +1,7 @@
 #include <iostream>
 #include <map>
-#include "Patient.h"
-#include "Doctor.h"
+//#include "Patient.h"
+//#include "Doctor.h"
 #include "Appointment.h"
 #include "Functions.h"
 #include "Exceptions.h"
@@ -10,13 +10,16 @@ using namespace std;
 int main()
 {
 	try {
-		bool breaker = true;
+		/*bool breaker = true;
 		while (breaker) {
 			menu(breaker);
 		}
+		*/
 
-		//Getting patients and doctors
-		
+		multimap<string, jb::Patient> patients;
+		read_patient_data("patients.txt", patients);
+
+		add_patient(patients);
 
 		
 	}

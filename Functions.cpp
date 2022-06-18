@@ -6,8 +6,8 @@
 #include <fstream>
 #include <map>
 
-#include "Patient.h"
-#include "Doctor.h"
+//#include "Patient.h"
+//#include "Doctor.h"
 using namespace std;
 
 typedef pair<string, jb::Patient> spPair;
@@ -112,7 +112,7 @@ void p_records() {
 		cout << "What would you like to do:" << endl;
 		cout << "1. See records" << endl;
 		cout << "2. Search for a patient by name" << endl;
-		cout << "3. Add a patient" << endl;
+		cout << "3. Add or remove a patient" << endl;
 		cout << "4. Add multiple patients from file" << endl;
 		cout << "5. Go back" << endl;
 		
@@ -127,7 +127,7 @@ void p_records() {
 			patient_search(patients);
 			break;
 		case 3:
-
+			manip_patients(patients);
 			break;
 		case 4:
 
@@ -147,6 +147,7 @@ void p_records() {
 }
 
 void patient_search(multimap<string, jb::Patient>& patients) {
+	system("cls");
 	cout << "Please enter the name of the patient you wish to search for:" << endl;
 	string name;
 
@@ -165,14 +166,80 @@ void patient_search(multimap<string, jb::Patient>& patients) {
 }
 
 void print_patient_records(multimap<string, jb::Patient>& patients) {
-
+	system("cls");
 	for (auto itr = patients.begin(); itr != patients.end(); ++itr)
 	{
 		cout << itr->second;
 	}
 	system("pause");
 }
+
+void manip_patients(multimap<string, jb::Patient>& patients) {
+	system("cls");
+	bool stop = false;
+	int choice = 0;
+	while (!stop) {
+		cout << "What would you like to do?" << endl;
+		cout << "1. Add a patient" << endl;
+		cout << "2. Remove a patient" << endl;
+		cout << "3. Add multiple patients" << endl;
+		cout << "4. Remove multiple patients" << endl;
+		cout << "5. Go back" << endl;
+		
+
+		cin.clear(); //Flush whole buffer
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		cin >> choice;
+
+		switch (choice) {
+		case 1:
+			add_patient(patients);
+			break;
+		case 2:
+			//remove_patient();
+			break;
+		case 3:
+			//add_many_patients();
+			break;
+		case 4:
+			//remove_many_patients();
+			break;
+		case 5:
+			stop = true;
+			break;
+		default:
+			cout << "Given input couldn't be resolved. Press any button to try again" << endl;
+			cin.clear(); //Flush whole input buffer
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			system("pause");
+			break;
+		}
+
+	}
+}
+
+void add_patient(multimap<string, jb::Patient>& patients) {
+	system("cls");
+	cout << "Please input the patient data in the following order:" << endl;
+	cout << "Name Surname, Phone number, Age, Address, PESEL number" << endl;
+	string line;
+	vector<string> out;
+
+	getline(cin, line);
+	out = split(line);
+
+	jb::Patient newPatient(out[0], out[1], stoi(out[2], nullptr), out[3], jb::Pesel(out[4]));
+	patients.insert(spPair(out[0], newPatient));
+	
+
+	//Now save to database
+	ofstream file;
+	file.open("Patients.txt", std::ios::app);
+	file << newPatient << "\n";
+	file.close();
+}
 /*---------------------------------------------------------------------------------*/
+
 void s_records() {};
 void set_appointment() {};
 void manip_data() {};
