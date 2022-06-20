@@ -14,5 +14,28 @@ namespace jb {
 		void print() {
 			cout << Name << ", " << Phone_number << ", " << Age << ", " << specialization << endl;
 		}
+
+		//GETTERS
+		string gName() {
+			return Person::Name;
+		}
+
+		string gPhone() {
+			return Person::Phone_number;
+		}
+
+		int gAge() {
+			return Person::Age;
+		}
+
+		string gSpec() {
+			return specialization;
+		}
+		//
 	};
+
+	inline ostream& operator << (ostream& out, Doctor& p) {
+		out << p.gName() << ", " << p.gPhone() << ", " << p.gAge() << ", " << p.gSpec();
+		return out;
+	}
 }

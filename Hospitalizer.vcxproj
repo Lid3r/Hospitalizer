@@ -157,6 +157,7 @@
     <Text Include="Appointments.txt" />
     <Text Include="Doctors.txt" />
     <Text Include="Patients.txt" />
+    <Text Include="test.txt" />
     <Text Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

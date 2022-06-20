@@ -67,5 +67,8 @@
     <Text Include="TODO.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="test.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include <limits>
 #include <fstream>
 #include <map>
+//#include <ctype.h>
 
 //#include "Patient.h"
 //#include "Doctor.h"
@@ -56,30 +57,8 @@ void read_patient_data(string name, vector<jb::Patient>& patients) {
 }
 */
 
-//For doctors
-void read_doctor_data(string name, multimap<string, jb::Doctor>& doctors) {
-	ifstream input;
-	string line;
-	input.open(name);
-	if (!input) {
-		cout << "Database file \"" << name << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
-		return;
-	}
-	else {
 
-		vector<string> out;
-		while (getline(input, line)) {
-			out = split(line);
-
-			doctors.insert(sdPair(out[0], jb::Doctor(out[0], out[1], stoi(out[2], nullptr), out[3])));
-		}
-
-	}
-	input.close();
-}
-
-
-/*--------------------------------PATIENT ZONE-------------------------------------*/
+/*--------------------------------PATIENT ZONE-------------------------------------*/		//Tried and tested, works
 
 void read_patient_data(string name, multimap<string, jb::Patient>& patients) {
 	ifstream input;
@@ -93,6 +72,9 @@ void read_patient_data(string name, multimap<string, jb::Patient>& patients) {
 
 		vector<string> out;
 		while (getline(input, line)) {
+			if (line == "") {
+				continue;
+			}
 			out = split(line);
 
 			patients.insert(spPair(out[0], jb::Patient(out[0], out[1], stoi(out[2], nullptr), out[3], jb::Pesel(out[4]))));
@@ -113,8 +95,7 @@ void p_records() {
 		cout << "1. See records" << endl;
 		cout << "2. Search for a patient by name" << endl;
 		cout << "3. Add or remove a patient" << endl;
-		cout << "4. Add multiple patients from file" << endl;
-		cout << "5. Go back" << endl;
+		cout << "4. Go back" << endl;
 		
 		int input = 0;
 		cin >> input;
@@ -130,9 +111,6 @@ void p_records() {
 			manip_patients(patients);
 			break;
 		case 4:
-
-			break;
-		case 5:
 			stopper = false;
 			break;
 		default:
@@ -158,9 +136,13 @@ void patient_search(multimap<string, jb::Patient>& patients) {
 
 	//Since multimap is alphabetically sorted, this returns the range from the first found key, to the last found key in the map
 	pair<patientIterator, patientIterator> results = patients.equal_range(name);
-
-	for (patientIterator it = results.first; it != results.second; it++) {
-		it->second.print();
+	if (results.first == results.second) {
+		cout << "No patient of a given name can be found in the database. Please check your input" << endl;
+	}
+	else {
+		for (patientIterator it = results.first; it != results.second; it++) {
+			cout << it->second;
+		}
 	}
 	system("pause");
 }
@@ -183,8 +165,7 @@ void manip_patients(multimap<string, jb::Patient>& patients) {
 		cout << "1. Add a patient" << endl;
 		cout << "2. Remove a patient" << endl;
 		cout << "3. Add multiple patients" << endl;
-		cout << "4. Remove multiple patients" << endl;
-		cout << "5. Go back" << endl;
+		cout << "4. Go back" << endl;
 		
 
 		cin.clear(); //Flush whole buffer
@@ -196,15 +177,12 @@ void manip_patients(multimap<string, jb::Patient>& patients) {
 			add_patient(patients);
 			break;
 		case 2:
-			//remove_patient();
+			remove_patient(patients);
 			break;
 		case 3:
 			//add_many_patients();
 			break;
 		case 4:
-			//remove_many_patients();
-			break;
-		case 5:
 			stop = true;
 			break;
 		default:
@@ -231,18 +209,184 @@ void add_patient(multimap<string, jb::Patient>& patients) {
 	jb::Patient newPatient(out[0], out[1], stoi(out[2], nullptr), out[3], jb::Pesel(out[4]));
 	patients.insert(spPair(out[0], newPatient));
 	
-
 	//Now save to database
+	write_to_file("Patients.txt", newPatient);
+}
+
+void add_many_patients(multimap<string, jb::Patient>& patients) {
+	system("cls");
+	cout << "Please enter the filename from which you want to extract contents. To go back, please type exit" << endl;
+	
+	string filename;
+	getline(cin, filename);
+
+	if (filename != "exit") {
+		ifstream input;
+		string line;
+		input.open(filename);
+
+		if (!input) {
+			cout << "Database file \"" << filename << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
+			return;
+		}
+		else {
+			vector<string> out;
+
+			while (getline(input, line)) {
+				if (line == "") {
+					continue;
+				}
+				out = split(line);
+				jb::Patient newPatient(out[0], out[1], stoi(out[2], nullptr), out[3], jb::Pesel(out[4]));
+				patients.insert(spPair(out[0], newPatient));
+				write_to_file("Patients.txt", newPatient);
+			}
+
+		}
+		input.close();
+		}
+	}
+
+void remove_patient(multimap<string, jb::Patient>& patients){
+	system("cls");
+	cout << "Please enter the name of the patient you wish to delete:" << endl;
+	string name;
+
+	cin.clear(); //Flush whole buffer
+
+	getline(cin, name);
+
+	//Since multimap is alphabetically sorted, this returns the range from the first found key, to the last found key in the map
+	pair<patientIterator, patientIterator> results = patients.equal_range(name);
+	int i = 0;
+	if (results.first == results.second) {
+		cout << "No patient of a given name can be found in the database. Please check your input" << endl;
+	}
+	else {
+		system("cls");
+		cout << endl << "Please select which one you'd like to remove" << endl;
+		for (patientIterator it = results.first; it != results.second; it++) {
+			cout << i << ". " << it->second << endl;
+			i++;
+		}
+
+		cin.clear(); //Flush whole buffer
+		cin >> i;
+
+		if (!isdigit(i)) {
+			cout << "Input unrecognized" << endl;
+		}
+		else {
+			cin.clear();
+			cout << endl << "Are you sure you want to delete this patient? [Y/N]" << endl;
+			string confirm;
+			cin >> confirm;
+
+			if (confirm == "Y" || confirm == "y") {
+				int iter = 0;
+				for (patientIterator it = results.first; it != results.second; it++) {
+					if (iter == i) {
+						patients.erase(it);
+						break;
+					}
+					iter++;
+				}
+				override_file("Patients.txt", patients);
+			}
+			else {
+				cout << "Cancelling deletion" << endl;
+			}
+		}
+	}
+}
+
+void write_to_file(string filename, jb::Patient& patient){
 	ofstream file;
-	file.open("Patients.txt", std::ios::app);
-	file << newPatient << "\n";
+	file.open(filename, std::ios::app);
+	file << "\n" << patient;
+	file.close();
+}
+
+void override_file(string filename, multimap<string, jb::Patient>& patients){
+	ofstream file;
+	file.open(filename);
+	patientIterator it = patients.begin();
+	file << it->second; //Write without newline
+	it++;
+	for (it; it != patients.end(); it++)
+	{
+		file << "\n" << it->second;
+	}
 	file.close();
 }
 /*---------------------------------------------------------------------------------*/
 
-void s_records() {};
+
+/*--------------------------------------STAFF ZONE-----------------------------------*/
+
+void read_doctor_data(string name, multimap<string, jb::Doctor>& doctors) {
+	ifstream input;
+	string line;
+	input.open(name);
+	if (!input) {
+		cout << "Database file \"" << name << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
+		return;
+	}
+	else {
+
+		vector<string> out;
+		while (getline(input, line)) {
+			out = split(line);
+
+			doctors.insert(sdPair(out[0], jb::Doctor(out[0], out[1], stoi(out[2], nullptr), out[3])));
+		}
+
+	}
+	input.close();
+}
+
+void s_records() {
+	multimap<string, jb::Doctor> doctors;
+	read_doctor_data("patients.txt", doctors);
+
+	bool stopper = true;
+	while (stopper) {
+		system("cls");
+		cout << "What would you like to do:" << endl;
+		cout << "1. See records" << endl;
+		cout << "2. Search for a doctor by name" << endl;
+		cout << "3. Add or remove a Doctor" << endl;
+		cout << "4. Go back" << endl;
+
+		int input = 0;
+		cin >> input;
+
+		switch (input) {
+		case 1:
+			//print_doctor_records(doctors);
+			break;
+		case 2:
+			//doctor_search(doctors);
+			break;
+		case 3:
+			//manip_doctors(doctors);
+			break;
+		case 4:
+			stopper = false;
+			break;
+		default:
+			cout << "Given input couldn't be resolved. Press any button to try again" << endl;
+			cin.clear(); //Flush whole input buffer after a wrong input (in case a character got in or God forbid a string)
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			system("pause");
+			break;
+		}
+	}
+};
+/*-----------------------------------------------------------------------------------*/
+
 void set_appointment() {};
-void manip_data() {};
+
 
 
 void menu(bool& breaker) {

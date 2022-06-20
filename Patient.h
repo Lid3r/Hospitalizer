@@ -47,7 +47,7 @@ namespace jb {
 	};
 
 	inline ostream& operator << (ostream& out, Patient& p) {
-		out << p.gName() << ", " << p.gPhone() << ", " << p.gAge() << ", " << p.gAdd() << ", " << p.gPesel().print() << endl;
+		out << p.gName() << ", " << p.gPhone() << ", " << p.gAge() << ", " << p.gAdd() << ", " << p.gPesel().print();
 		return out;
 	}
 

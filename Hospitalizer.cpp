@@ -19,9 +19,7 @@ int main()
 		multimap<string, jb::Patient> patients;
 		read_patient_data("patients.txt", patients);
 
-		add_patient(patients);
-
-		
+		add_many_patients(patients);
 	}
 	catch (jb::personNameException& e) {
 		e.say();

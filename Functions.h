@@ -22,13 +22,17 @@ void manip_patients(multimap<string, jb::Patient>& patients);
 
 void add_patient(multimap<string, jb::Patient>& patients);
 
-void remove_patient();
+void remove_patient(multimap<string, jb::Patient>& patients);
 
-void add_many_patients();
+void add_many_patients(multimap<string, jb::Patient>& patients);
 
-void remove_many_patients();
+void write_to_file(string filename, jb::Patient& patient);
+
+void override_file(string filename, multimap<string, jb::Patient>& patients);
+/*-----------------------------------------------------------------------------------*/
+
+/*--------------------------------------STAFF ZONE-----------------------------------*/
 
 /*-----------------------------------------------------------------------------------*/
 void s_records();
 void set_appointment();
-void manip_data();
