@@ -12,7 +12,7 @@ namespace jb {
 		int Age;
 
 	public:
-		Person(const string& name, const string& phone, const int age) : Name(name), Phone_number(phone), Age(age) {
+		Person(const string& name, const string& phone, string& age) : Name(name), Phone_number(phone), Age(stoi(age)) {
 			if (phone.length() != 9) {
 				throw personPhoneException();
 			}
@@ -21,19 +21,36 @@ namespace jb {
 				throw personNameException();
 			}
 
-			if (age < 0) {
+			if (age == "") {
 				throw personAgeException();
 			}
+
+			if (stoi(age) < 0) {
+				throw personAgeException();
+			}
+		}
+
+		string gName() {
+			return Name;
+		}
+
+		string gPhone() {
+			return Phone_number;
+		}
+
+		int gAge() {
+			return Age;
 		}
 
 		//Check if string contains numbers
 		bool isNumeric(string const& str)
 		{
-			auto it = find_if(str.begin(), str.end(), [](char const& c) {
-				return !isdigit(c);
-			});
-
-			return !str.empty() && it == str.end();
+			return find_if(str.begin(), str.end(), ::isdigit) != str.end();
 		}
 	};
+
+	inline ostream& operator << (ostream& out, Person& p) {
+		out << p.gName() << ", " << p.gPhone() << ", " << p.gAge();
+		return out;
+	}
 }

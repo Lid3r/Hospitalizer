@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
-
+#include <sstream>
+#include <iostream>
 using namespace std;
 
 //This here works, don't touch
@@ -8,6 +9,7 @@ using namespace std;
 
 namespace jb {
 	class Datetime {
+		string original;
 		string date;
 		int hourStart;
 		int minuteStart;
@@ -16,10 +18,14 @@ namespace jb {
 		//Format of DD/MM/YYYY HH:MM or H:MM. Each appointment takes about 30 mins.
 	public:
 
-		Datetime(const string& d, const string& s) {
+		Datetime(const string& dt) {
 			//we assume the clinic is running from 8:00-20:00
-
+			original = dt;
+			vector<string> tokdt = tokenize(dt, ' ');
 			//I'll think about wrong date logic
+
+			string d = tokdt[0];
+			string s = tokdt[1];
 
 			int h, m;
 			if (s.length() == 5) {
@@ -56,9 +62,23 @@ namespace jb {
 			minuteStart = m;
 		}
 
-		void print() {
-			cout << "Starts: " << hourStart << ":" << minuteStart << endl;
-			cout << "Ends: " << hourFinish << ":" << minuteFinish << endl;
+
+
+		string print() {
+			return original;
+		}
+
+		vector<string> tokenize(const string& str, const char delim)
+		{
+			vector<string> out;
+			// construct a stream from the string
+			stringstream ss(str);
+
+			string s;
+			while (getline(ss, s, delim)) {
+				out.push_back(s);
+			}
+			return out;
 		}
 
 		bool checker(int h1, int h2, int m1, int m2) {
@@ -80,4 +100,6 @@ namespace jb {
 			return date == app.date && checker(hourFinish, app.hourStart, minuteFinish, app.minuteStart);
 		}
 	};
+
+
 }

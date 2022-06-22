@@ -15,11 +15,12 @@ int main()
 			menu(breaker);
 		}
 		*/
-
-		multimap<string, jb::Patient> patients;
-		read_patient_data("patients.txt", patients);
-
-		add_many_patients(patients);
+		multimap<string, jb::Appointment> appointments;
+		read_appointment_data("Appointments.txt", appointments);
+		for (auto itr = appointments.begin(); itr != appointments.end(); ++itr)
+		{
+			cout << itr->second << endl;
+		}
 	}
 	catch (jb::personNameException& e) {
 		e.say();

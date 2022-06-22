@@ -1,9 +1,11 @@
 Patient :
-String Name Surname, String Phone number, int Age, String Address, PESEL number
+String Name Surname, String Phone number, string Age, String Address, PESEL number
 
 Doctor:
-String Name Surname, String Phone number, int Age, String specialization
+String Name Surname, String Phone number, string Age, String specialization
 
+Appointment:
+Patient(String Name Surname, String Phone number, string Age, String Address, PESEL number), Date Time, Doctor(String Name Surname, String Phone number, string Age, String specialization)
 
 LOGIC LOGIC LOGIC
 Dr can't be in 2 places at once

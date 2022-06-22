@@ -13,10 +13,27 @@ namespace jb {
 		jb::Datetime dt;
 
 	public:
-		Appointment(const jb::Patient& pat,const jb::Doctor& doc, const jb::Datetime& date) : patient(pat), doctor(doc), dt(date) {
+		Appointment(const jb::Patient& pat, const jb::Datetime& date, const jb::Doctor& doc) : patient(pat), doctor(doc), dt(date) {
 			
-
-
 		}
+
+		jb::Patient gPatient() {
+			return patient;
+		}
+
+		jb::Datetime gDt() {
+			return dt;
+		}
+
+		jb::Doctor gDoctor() {
+			return doctor;
+		}
+
+
 	};
+
+	inline ostream& operator << (ostream& out, Appointment& a) {
+		out << a.gPatient().gName() << ", " << a.gPatient().gPhone() << ", " << a.gPatient().gAge() << ", " << a.gPatient().gAdd() << ", " << a.gPatient().gPesel().print() << ", " << a.gDt().print() << ", " << a.gDoctor().gName() << ", " << a.gDoctor().gPhone() << ", " << a.gDoctor().gAge() << ", " << a.gDoctor().gSpec();
+		return out;
+	}
 }
