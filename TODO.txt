@@ -15,3 +15,5 @@ Patient can't have 2 appointments overlaping
 
 Assumptions:
 Database file is always right
+Clinic works from 8:00-20:00
+A visit takes 30 minutes

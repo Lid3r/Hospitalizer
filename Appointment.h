@@ -29,7 +29,11 @@ namespace jb {
 			return doctor;
 		}
 
-
+		void print_nicely() {
+			cout << "Patient:" << endl << patient << endl;
+			cout << "Date and time:" << endl << dt << endl;
+			cout << "Doctor:" << endl << doctor << endl << endl;
+		}
 	};
 
 	inline ostream& operator << (ostream& out, Appointment& a) {

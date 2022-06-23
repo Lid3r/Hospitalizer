@@ -101,5 +101,8 @@ namespace jb {
 		}
 	};
 
-
+	inline ostream& operator << (ostream& out, Datetime& d) {
+		out << d.print();
+		return out;
+	}
 }

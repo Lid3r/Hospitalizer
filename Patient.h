@@ -32,6 +32,10 @@ namespace jb {
 		void print() {
 			cout << Name << ", " << Phone_number << ", " << Age << ", " << Adress << ", " << PESEL.print() << endl;
 		}
+
+		bool operator == (const Patient& pat) noexcept {
+			return ((Name == pat.Name) && (Phone_number == pat.Phone_number) && (Age == pat.Age) && (PESEL == pat.PESEL));
+		}
 	};
 
 	inline ostream& operator << (ostream& out, Patient& p) {

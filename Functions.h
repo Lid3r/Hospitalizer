@@ -8,6 +8,9 @@
 
 void read_patient_data(string name, multimap<string, jb::Patient>& patients);
 void read_doctor_data(string name, multimap<string, jb::Doctor>& doctors);
+jb::Patient return_patient_from_search();
+jb::Doctor return_doctor_from_search();
+
 
 void menu(bool& breaker);
 void buffer_flush();
@@ -59,4 +62,19 @@ void read_appointment_data(string filename, multimap<string, jb::Appointment>& a
 
 void appointments();
 
+void print_appointments(multimap<string, jb::Appointment>& appointments);
+
+void appointment_search(multimap<string, jb::Appointment>& appointments);
+
+void manip_appointments(multimap<string, jb::Appointment>& appointments);
+
+void add_appointment(multimap<string, jb::Appointment>& appointments);
+
+void remove_appointment(multimap<string, jb::Appointment>& appointments);
+
+void add_many_appointments(multimap<string, jb::Appointment>& appointments);
+
+void write_to_file(string filename, jb::Appointment& appointment);
+
+void override_file(string filename, multimap<string, jb::Appointment>& appointments);
 /*-----------------------------------------------------------------------------------*/

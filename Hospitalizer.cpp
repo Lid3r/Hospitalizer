@@ -10,17 +10,11 @@ using namespace std;
 int main()
 {
 	try {
-		/*bool breaker = true;
+		bool breaker = true;
 		while (breaker) {
 			menu(breaker);
 		}
-		*/
-		multimap<string, jb::Appointment> appointments;
-		read_appointment_data("Appointments.txt", appointments);
-		for (auto itr = appointments.begin(); itr != appointments.end(); ++itr)
-		{
-			cout << itr->second << endl;
-		}
+		
 	}
 	catch (jb::personNameException& e) {
 		e.say();

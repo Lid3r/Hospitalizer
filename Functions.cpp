@@ -6,7 +6,7 @@
 #include <fstream>
 #include <map>
 #include <ctype.h>
-
+#include "Exceptions.h"
 //#include "Patient.h"
 //#include "Doctor.h"
 using namespace std;
@@ -16,7 +16,9 @@ typedef pair<string, jb::Doctor> sdPair;
 typedef pair<string, jb::Appointment> saPair;
 typedef multimap<string, jb::Patient>::iterator patientIterator;
 typedef multimap<string, jb::Doctor>::iterator doctorIterator;
+typedef multimap<string, jb::Appointment>::iterator appointmentIterator;
 
+/*-------------------------------UTILITY ZONE---------------------------------------*/
 vector<string> split(string line) {
 	vector<string> tokenized;
 	size_t pos = 0;
@@ -31,10 +33,12 @@ vector<string> split(string line) {
 	tokenized.push_back(line);
 	return tokenized;
 }
+
 void buffer_flush() {
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
+
 bool check_number(string str) {
 	for (int i = 0; i < str.length(); i++)
 		if (isdigit(str[i]) == false)
@@ -44,30 +48,113 @@ bool check_number(string str) {
 		}
 }
 
-//Legacy code, if something breaks
-/*
-//For patients
-void read_patient_data(string name, vector<jb::Patient>& patients) {
-	ifstream input;
-	string line;
-	input.open(name);
-	if (!input) {
-		cout << "Database file \"" << name << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
-		return;
+jb::Patient return_patient_from_search() {
+	multimap < string, jb::Patient> patients;
+	read_patient_data("Patients.txt", patients);
+
+	string name;
+
+	buffer_flush();
+
+	getline(cin, name);
+
+	//Since multimap is alphabetically sorted, this returns the range from the first found key, to the last found key in the map
+	pair<patientIterator, patientIterator> results = patients.equal_range(name);
+	int i = 0;
+	if (results.first == results.second) {
+		cout << "No patient of a given name can be found in the database. Please check your input" << endl;
+		throw jb::appointmentFailbitException();
 	}
 	else {
-
-		vector<string> out;
-		while (getline(input, line)) {
-			out = split(line);
-
-			patients.push_back(jb::Patient(out[0], out[1], stoi(out[2], nullptr), out[3], jb::Pesel(out[4])));
+		system("cls");
+		cout << endl << "Please select which one you'd like to choose:" << endl;
+		for (patientIterator it = results.first; it != results.second; it++) {
+			cout << i << ". " << it->second << endl;
+			i++;
 		}
 
+		i--;
+		cin.clear();
+		string s;
+
+		cin >> s;
+
+		if (!check_number(s)) {
+			throw jb::appointmentFailbitException();
+		}
+		else {
+
+			//check if the number can be found
+			int inp = stoi(s, nullptr);
+			if (inp < 0 || inp > i) {
+				throw jb::appointmentFailbitException();
+			}
+
+			int iter = 0;
+			for (patientIterator it = results.first; it != results.second; it++) {
+				if (iter == inp) {
+					return it->second;
+				}
+				iter++;
+			}
+		}
 	}
-	input.close();
 }
-*/
+
+jb::Doctor return_doctor_from_search() {
+	multimap < string, jb::Doctor> doctors;
+	read_doctor_data("Doctors.txt", doctors);
+
+	string name;
+
+	buffer_flush();
+
+	getline(cin, name);
+
+	//Since multimap is alphabetically sorted, this returns the range from the first found key, to the last found key in the map
+	pair<doctorIterator, doctorIterator> results = doctors.equal_range(name);
+	int i = 0;
+	if (results.first == results.second) {
+		cout << "No doctor of a given name can be found in the database. Please check your input" << endl;
+		throw jb::appointmentFailbitException();
+	}
+	else {
+		system("cls");
+		cout << "Please select which one you'd like to choose:" << endl;
+		for (doctorIterator it = results.first; it != results.second; it++) {
+			cout << i << ". " << it->second << endl;
+			i++;
+		}
+
+		i--;
+		cin.clear();
+		string s;
+
+		cin >> s;
+
+		if (!check_number(s)) {
+			throw jb::appointmentFailbitException();
+		}
+		else {
+
+			//check if the number can be found
+			int inp = stoi(s, nullptr);
+			if (inp < 0 || inp > i) {
+				throw jb::appointmentFailbitException();
+			}
+
+			int iter = 0;
+			for (doctorIterator it = results.first; it != results.second; it++) {
+				if (iter == inp) {
+					return it->second;
+				}
+				iter++;
+			}
+		}
+	}
+}
+
+/*---------------------------------------------------------------------------------*/
 
 
 /*--------------------------------PATIENT ZONE-------------------------------------*/		//Tried and tested, works
@@ -114,7 +201,7 @@ void p_records() {
 
 		switch (input) {
 		case 1:
-				print_patient_records(patients);
+			print_patient_records(patients);
 			break;
 		case 2:
 			patient_search(patients);
@@ -140,6 +227,8 @@ void patient_search(multimap<string, jb::Patient>& patients) {
 	system("cls");
 	cout << "Please enter the name of the patient you wish to search for:" << endl;
 	string name;
+	
+	buffer_flush();
 
 	getline(cin, name);
 
@@ -150,7 +239,7 @@ void patient_search(multimap<string, jb::Patient>& patients) {
 	}
 	else {
 		for (patientIterator it = results.first; it != results.second; it++) {
-			cout << it->second;
+			cout << it->second << endl;
 		}
 	}
 	system("pause");
@@ -160,16 +249,17 @@ void print_patient_records(multimap<string, jb::Patient>& patients) {
 	system("cls");
 	for (auto itr = patients.begin(); itr != patients.end(); ++itr)
 	{
-		cout << itr->second;
+		cout << itr->second << endl;
 	}
 	system("pause");
 }
 
 void manip_patients(multimap<string, jb::Patient>& patients) {
-	system("cls");
+	
 	bool stop = false;
 	int choice = 0;
 	while (!stop) {
+		system("cls");
 		cout << "What would you like to do?" << endl;
 		cout << "1. Add a patient" << endl;
 		cout << "2. Remove a patient" << endl;
@@ -204,12 +294,43 @@ void manip_patients(multimap<string, jb::Patient>& patients) {
 				cout << e.what() << endl;
 				system("pause");
 			}
+			catch (jb::peselDuplicateException& e) {
+				e.say();
+				system("pause");
+			}
 			break;
 		case 2:
 			remove_patient(patients);
 			break;
 		case 3:
-			add_many_patients(patients);
+			try {
+				add_many_patients(patients);
+			}
+			catch (jb::argumentAmountException& e) {
+				e.say();
+				system("pause");
+			}
+			catch (jb::personNameException& e) {
+				e.say();
+				system("pause");
+			}
+			catch (jb::personAgeException& e) {
+				e.say();
+				system("pause");
+			}
+			catch (jb::personPhoneException& e) {
+				e.say();
+				system("pause");
+			}
+			catch (invalid_argument& e) {
+				cout << "Input incorrect!" << endl;
+				cout << e.what() << endl;
+				system("pause");
+			}
+			catch (jb::peselDuplicateException& e) {
+				e.say();
+				system("pause");
+			}
 			break;
 		case 4:
 			stop = true;
@@ -231,6 +352,8 @@ void add_patient(multimap<string, jb::Patient>& patients) {
 	string line;
 	vector<string> out;
 
+	buffer_flush();
+
 	getline(cin, line);
 	if (line == "") {
 		throw jb::argumentAmountException();
@@ -245,7 +368,7 @@ void add_patient(multimap<string, jb::Patient>& patients) {
 	for (auto itr = patients.begin(); itr != patients.end(); ++itr)
 	{
 		if (itr->second.gPesel() == jb::Pesel(out[4])) {
-			throw jb::peselDuplicateException();
+			throw jb::peselDuplicateException(out[4], itr->second.gName());
 		}
 	}
 
@@ -262,6 +385,8 @@ void add_many_patients(multimap<string, jb::Patient>& patients) {
 	system("cls");
 	cout << "Please enter the filename from which you want to extract contents. To go back, please type exit" << endl;
 	
+	buffer_flush();
+
 	string filename;
 	getline(cin, filename);
 
@@ -272,6 +397,7 @@ void add_many_patients(multimap<string, jb::Patient>& patients) {
 
 		if (!input) {
 			cout << "Database file \"" << filename << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
+			system("pause");
 			return;
 		}
 		else {
@@ -288,6 +414,14 @@ void add_many_patients(multimap<string, jb::Patient>& patients) {
 					cout << "Will be ommited" << endl;
 					continue;
 				}
+
+				for (auto itr = patients.begin(); itr != patients.end(); ++itr)
+				{
+					if (itr->second.gPesel() == jb::Pesel(out[4])) {
+						throw jb::peselDuplicateException(out[4], itr->second.gName());
+					}
+				}
+
 				jb::Patient newPatient(out[0], out[1], out[2], out[3], jb::Pesel(out[4]));
 				patients.insert(spPair(out[0], newPatient));
 				write_to_file("Patients.txt", newPatient);
@@ -371,7 +505,7 @@ void override_file(string filename, multimap<string, jb::Patient>& patients){
 /*---------------------------------------------------------------------------------*/
 
 
-/*--------------------------------------STAFF ZONE-----------------------------------*/
+/*-------------------------------------STAFF ZONE-----------------------------------*/
 
 void read_doctor_data(string name, multimap<string, jb::Doctor>& doctors) {
 	ifstream input;
@@ -717,6 +851,17 @@ void read_appointment_data(string filename, multimap<string, jb::Appointment>& a
 
 		vector<string> out;
 		while (getline(input, line)) {
+			if (line == "") {
+				continue;
+			}
+
+			if (out.size() != 10) {
+				cout << "Not enough or too much information. An appointment:" << endl;
+				cout << line << endl;
+				cout << "Will be ommited" << endl;
+				system("pause");
+				continue;
+			}
 			out = split(line);
 
 			appointments.insert(saPair(out[0], jb::Appointment(jb::Patient(out[0], out[1], out[2], out[3], jb::Pesel(out[4])), jb::Datetime(out[5]), jb::Doctor(out[6], out[7], out[8], out[9]))));
@@ -728,6 +873,8 @@ void read_appointment_data(string filename, multimap<string, jb::Appointment>& a
 
 void appointments() {
 	multimap<string, jb::Appointment> appointments;
+	read_appointment_data("Appointments.txt", appointments);
+
 	bool stopper = true;
 	while (stopper) {
 		system("cls");
@@ -739,7 +886,268 @@ void appointments() {
 
 		int input = 0;
 		cin >> input;
+
+		switch (input) {
+		case 1:
+			print_appointments(appointments);
+			break;
+		case 2:
+			appointment_search(appointments);
+			break;
+		case 3:
+			manip_appointments(appointments);
+		case 4:
+			stopper = false;
+			break;
+		default:
+			cout << "Given input couldn't be resolved. Press any button to try again" << endl;
+			buffer_flush();
+			system("pause");
+			break;
+		}
 	}
+}
+
+void print_appointments(multimap<string, jb::Appointment>& appointments){
+	system("cls");
+	for (auto itr = appointments.begin(); itr != appointments.end(); ++itr)
+	{
+		itr->second.print_nicely();
+	}
+	system("pause");
+}
+
+void appointment_search(multimap<string, jb::Appointment>& appointments) {
+	system("cls");
+	cout << "Please enter the name of the patient for whose appointment you wish to search:" << endl;
+	string name;
+
+	buffer_flush();
+
+	getline(cin, name);
+
+	//Since multimap is alphabetically sorted, this returns the range from the first found key, to the last found key in the map
+	pair<appointmentIterator, appointmentIterator> results = appointments.equal_range(name);
+	if (results.first == results.second) {
+		cout << "No appointment of a given patient name can be found in the database. Please check your input" << endl;
+	}
+	else {
+		for (appointmentIterator it = results.first; it != results.second; it++) {
+			it->second.print_nicely();
+		}
+	}
+	system("pause");
+}
+
+void manip_appointments(multimap<string, jb::Appointment>& appointments) {
+	bool stop = false;
+	int choice = 0;
+	while (!stop) {
+		system("cls");
+		cout << "What would you like to do?" << endl;
+		cout << "1. Schedule an appointment" << endl;
+		cout << "2. Remove an appointment" << endl;
+		cout << "3. Add multiple appointments" << endl;
+		cout << "4. Go back" << endl;
+
+		cin >> choice;
+
+		switch (choice) {
+		case 1:
+			try {
+				add_appointment(appointments);
+			}
+			catch (jb::appointmentFailbitException &e) {
+				e.say();
+				system("pause");
+			}
+			break;
+		case 2:
+			try {
+				remove_appointment(appointments);
+			}
+			catch (invalid_argument) {
+				cout << "Something went wrong, most likely input out of range" << endl;
+				system("pause");
+			}
+			break;
+		case 3:
+			try {
+				add_many_appointments(appointments);
+			}
+			catch (...) {
+
+			}
+			break;
+		case 4:
+			stop = true;
+			break;
+		default:
+			cout << "Given input couldn't be resolved. Press any button to try again" << endl;
+			buffer_flush();
+			system("pause");
+			break;
+		}
+	}
+}
+
+void add_appointment(multimap<string, jb::Appointment>& appointments) {
+	system("cls");
+	cout << "Please type in the name of the patient you wish to schedule an appointment for:" << endl;
+	jb::Patient p = return_patient_from_search();
+	
+	cout << "Please input the date in the format of: DD/MM/YYYY HH:MM" << endl;
+	string date;
+	//vector<string> out;
+
+	buffer_flush();
+
+	getline(cin, date);
+	
+	jb::Datetime dt(date);
+		
+
+	cout << "Please type in the name of the doctor you wish to schedule an appointment with:" << endl;
+
+	jb::Doctor doc = return_doctor_from_search();
+
+	//Check if doctor is busy
+
+	jb::Appointment newAppointment(p, dt, doc);
+
+
+		appointments.insert(saPair(p.gName(), newAppointment));
+
+		//Now save to database
+		write_to_file("Appointments.txt", newAppointment);
+	}
+
+void remove_appointment(multimap<string, jb::Appointment>& appointments) {
+	system("cls");
+	cout << "Please enter the name of the patient whose appointment you wish to delete:" << endl;
+	string name;
+
+	buffer_flush();
+
+	getline(cin, name);
+
+	//Since multimap is alphabetically sorted, this returns the range from the first found key, to the last found key in the map
+	pair<appointmentIterator, appointmentIterator> results = appointments.equal_range(name);
+	int i = 0;
+	if (results.first == results.second) {
+		cout << "No appointment of a given patient name can be found in the database. Please check your input" << endl;
+	}
+	else {
+		system("cls");
+		cout << endl << "Please select which one you'd like to remove" << endl;
+		for (appointmentIterator it = results.first; it != results.second; it++) {
+			cout << i << ". " << it->second << endl;
+			i++;
+		}
+
+		i--;
+
+		cin.clear();
+		string s;
+
+		cin >> s;
+
+		if (!check_number(s)) {
+			cout << "Input unrecognized" << endl;
+		}
+		else {
+
+			//check if the number can be found
+			int inp = stoi(s, nullptr);
+			if (inp < 0 || inp > i) {
+				throw invalid_argument("");
+			}
+
+			cout << endl << "Are you sure you want to delete this appointment? [Y/N]" << endl;
+			string confirm;
+			cin >> confirm;
+
+			if (confirm == "Y" || confirm == "y") {
+				int iter = 0;
+				for (appointmentIterator it = results.first; it != results.second; it++) {
+					if (iter == inp) {
+						appointments.erase(it);
+						break;
+					}
+					iter++;
+				}
+				override_file("Appointments.txt", appointments);
+			}
+			else {
+				cout << "Cancelling deletion" << endl;
+			}
+		}
+	}
+}
+
+void add_many_appointments(multimap<string, jb::Appointment>& appointments) {
+	system("cls");
+	cout << "Please enter the filename from which you want to extract contents. To go back, please type exit" << endl;
+
+	string filename;
+	buffer_flush();
+	getline(cin, filename);
+
+	if (filename != "exit") {
+		ifstream input;
+		string line;
+		input.open(filename);
+
+		if (!input) {
+			cout << "Database file \"" << filename << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
+			return;
+		}
+		else {
+			vector<string> out;
+
+			while (getline(input, line)) {
+				if (line == "") {
+					continue;
+				}
+				out = split(line);
+				if (out.size() != 10) {
+					cout << "Not enough or too much information. An appointment:" << endl;
+					cout << line << endl;
+					cout << "Will be ommited" << endl;
+					system("pause");
+					continue;
+				}
+
+				jb::Appointment newAppointment(jb::Patient(out[0], out[1], out[2], out[3], jb::Pesel(out[4])), jb::Datetime(out[5]), jb::Doctor(out[6], out[7], out[8], out[9]));
+				appointments.insert(saPair(out[0], newAppointment));
+
+				write_to_file("Appointments.txt", newAppointment);
+
+			}
+
+		}
+		input.close();
+	}
+}
+
+void write_to_file(string filename, jb::Appointment& appointment) {
+	ofstream file;
+	file.open(filename, std::ios::app);
+	file << "\n" << appointment;
+	file.close();
+}
+
+void override_file(string filename, multimap<string, jb::Appointment>& appointments) {
+	ofstream file;
+	file.open(filename);
+	appointmentIterator it = appointments.begin();
+	file << it->second; //Write without newline
+	it++;
+	for (it; it != appointments.end(); it++)
+	{
+		file << "\n" << it->second;
+	}
+	file.close();
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -769,7 +1177,7 @@ void menu(bool& breaker) {
 		
 		break;
 	case 4:
-		
+		appointments();
 		break;
 	case 5:
 		breaker = false;

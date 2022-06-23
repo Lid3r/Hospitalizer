@@ -71,9 +71,25 @@ namespace jb {
 	};
 
 	class peselDuplicateException : public peselException {
+		string pesel;
+		string person;
 	public:
+		peselDuplicateException() : pesel(""), person(""){}
+		peselDuplicateException(string pesel, string person) : pesel(pesel), person(person){}
+
 		void say() {
 			cout << "PESEL duplicate detected in database. Please try again" << endl;
+			cout << "Duplicate pesel: " << pesel << endl;
+			cout << "Assignet to patient: " << person << endl;
+		}
+	};
+
+	class appointmentException : public exception {};
+
+	class appointmentFailbitException : public appointmentException {
+	public:
+		void say() {
+			cout << "Incorrect input has been detected in scheduling an appointment. Please check your inputs" << endl;
 		}
 	};
 }

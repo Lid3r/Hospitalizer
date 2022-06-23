@@ -31,7 +31,11 @@ namespace jb {
 		string gSpec() {
 			return specialization;
 		}
-		//
+		
+		bool operator == (const Doctor& doc) noexcept {
+			return ((Name == doc.Name) && (Phone_number == doc.Phone_number) && (Age == doc.Age) && (specialization == doc.specialization));
+		}
+
 	};
 
 	inline ostream& operator << (ostream& out, Doctor& p) {
