@@ -87,7 +87,7 @@ namespace jb {
 			int t2 = h2 * 60 + m2; //start time in minutes
 
 			//Absolute difference between the 2 times must be >= 30
-			if (abs(t1 - t2) < 30) {
+			if (abs(t1 - t2) <= 30) {
 				return true;
 			}
 			else {

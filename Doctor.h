@@ -9,7 +9,11 @@ namespace jb {
 		string specialization;
 
 	public:
-		Doctor(const string& name, const string& phone, string& age, const string& spec) : Person(name, phone, age), specialization(spec) {}
+		Doctor(const string& name, const string& phone, string& age, const string& spec) : Person(name, phone, age), specialization(spec) {
+			if (spec == "") {
+				throw jb::doctorSpecException();
+			}
+		}
 
 		void print() {
 			cout << Name << ", " << Phone_number << ", " << Age << ", " << specialization << endl;

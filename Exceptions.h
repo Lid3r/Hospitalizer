@@ -6,6 +6,13 @@ using namespace std;
 namespace jb {
 	class generalException : public exception{};
 
+	class fileException : public exception {
+	public:
+		void say() {
+			cout << "Couldn't open file! Please make sure the file has a correct name and is accesible (i.e. in the same folder)" << endl;
+		}
+	};
+
 	class argumentAmountException : public generalException {
 	public:
 		void say() {
@@ -43,6 +50,13 @@ namespace jb {
 	public:
 		void say() {
 			cout << "An excpetion in adress field has occured!";
+		}
+	};
+
+	class doctorSpecException : public exception {
+	public:
+		void say() {
+			cout << "Doctor specialization may not be an empty string" << endl;
 		}
 	};
 
@@ -90,6 +104,13 @@ namespace jb {
 	public:
 		void say() {
 			cout << "Incorrect input has been detected in scheduling an appointment. Please check your inputs" << endl;
+		}
+	};
+
+	class appointmentConflictException : public appointmentException {
+	public:
+		void say() {
+			cout << "There was a conflict between appointments. Patient or doctor may not be scheduled for two appointments in the same timeframe" << endl;
 		}
 	};
 }

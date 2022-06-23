@@ -12,7 +12,7 @@ namespace jb {
 		int Age;
 
 	public:
-		Person(const string& name, const string& phone, string& age) : Name(name), Phone_number(phone), Age(stoi(age)) {
+		Person(const string& name, const string& phone, const string& age) : Name(name), Phone_number(phone), Age(stoi(age)) {
 			if (phone.length() != 9) {
 				throw personPhoneException();
 			}

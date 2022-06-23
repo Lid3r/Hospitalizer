@@ -19,6 +19,8 @@ typedef multimap<string, jb::Doctor>::iterator doctorIterator;
 typedef multimap<string, jb::Appointment>::iterator appointmentIterator;
 
 /*-------------------------------UTILITY ZONE---------------------------------------*/
+
+//Splits a string into a vector by delimiter of ", "
 vector<string> split(string line) {
 	vector<string> tokenized;
 	size_t pos = 0;
@@ -34,11 +36,13 @@ vector<string> split(string line) {
 	return tokenized;
 }
 
+//Flush the buffer in case of an error
 void buffer_flush() {
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+//Check if string contains a number
 bool check_number(string str) {
 	for (int i = 0; i < str.length(); i++)
 		if (isdigit(str[i]) == false)
@@ -48,6 +52,7 @@ bool check_number(string str) {
 		}
 }
 
+//Returns a patient of a given name from the database
 jb::Patient return_patient_from_search() {
 	multimap < string, jb::Patient> patients;
 	read_patient_data("Patients.txt", patients);
@@ -101,13 +106,14 @@ jb::Patient return_patient_from_search() {
 	}
 }
 
+//Returns a patient of a given name from the database
 jb::Doctor return_doctor_from_search() {
 	multimap < string, jb::Doctor> doctors;
 	read_doctor_data("Doctors.txt", doctors);
 
 	string name;
 
-	buffer_flush();
+	//buffer_flush();
 
 	getline(cin, name);
 
@@ -159,6 +165,7 @@ jb::Doctor return_doctor_from_search() {
 
 /*--------------------------------PATIENT ZONE-------------------------------------*/		//Tried and tested, works
 
+//Read patients from database file
 void read_patient_data(string name, multimap<string, jb::Patient>& patients) {
 	ifstream input;
 	string line;
@@ -183,6 +190,7 @@ void read_patient_data(string name, multimap<string, jb::Patient>& patients) {
 	input.close();
 }
 
+//Make a choice about patients
 void p_records() {
 	multimap<string, jb::Patient> patients;
 	read_patient_data("patients.txt", patients);
@@ -223,6 +231,7 @@ void p_records() {
 
 }
 
+//Search a patient of a given name
 void patient_search(multimap<string, jb::Patient>& patients) {
 	system("cls");
 	cout << "Please enter the name of the patient you wish to search for:" << endl;
@@ -245,6 +254,7 @@ void patient_search(multimap<string, jb::Patient>& patients) {
 	system("pause");
 }
 
+//Print all patient records
 void print_patient_records(multimap<string, jb::Patient>& patients) {
 	system("cls");
 	for (auto itr = patients.begin(); itr != patients.end(); ++itr)
@@ -254,6 +264,7 @@ void print_patient_records(multimap<string, jb::Patient>& patients) {
 	system("pause");
 }
 
+//Choice tree about manipulating patient database
 void manip_patients(multimap<string, jb::Patient>& patients) {
 	
 	bool stop = false;
@@ -345,6 +356,7 @@ void manip_patients(multimap<string, jb::Patient>& patients) {
 	}
 }
 
+//Add a single patient from console input
 void add_patient(multimap<string, jb::Patient>& patients) {
 	system("cls");
 	cout << "Please input the patient data in the following order:" << endl;
@@ -377,10 +389,12 @@ void add_patient(multimap<string, jb::Patient>& patients) {
 	
 	//Now save to database
 	write_to_file("Patients.txt", newPatient);
+	system("cls");
 	cout << newPatient << " has been created!" << endl;
 	system("pause");
 }
 
+//Add multiple patients from file
 void add_many_patients(multimap<string, jb::Patient>& patients) {
 	system("cls");
 	cout << "Please enter the filename from which you want to extract contents. To go back, please type exit" << endl;
@@ -428,14 +442,19 @@ void add_many_patients(multimap<string, jb::Patient>& patients) {
 			}
 
 		}
+		cout << "Patients succesfully extracted!" << endl;
+		system("pause");
 		input.close();
 		}
 	}
 
+//Remove a single patient by name
 void remove_patient(multimap<string, jb::Patient>& patients){
 	system("cls");
 	cout << "Please enter the name of the patient you wish to delete:" << endl;
 	string name;
+
+	buffer_flush();
 
 	getline(cin, name);
 
@@ -475,24 +494,37 @@ void remove_patient(multimap<string, jb::Patient>& patients){
 					iter++;
 				}
 				override_file("Patients.txt", patients);
+				cout << "Patient " << name << " succesfully deleted!" << endl;
+				system("pause");
 			}
 			else {
 				cout << "Cancelling deletion" << endl;
+				system("pause");
 			}
 		}
 	}
 }
 
+//Write a single patient to file
 void write_to_file(string filename, jb::Patient& patient){
 	ofstream file;
 	file.open(filename, std::ios::app);
-	file << "\n" << patient;
-	file.close();
+	if (file.is_open()) {
+		file << "\n" << patient;
+		file.close();
+	}
+	else {
+		throw jb::fileException();
+	}
 }
 
+//Overwrite file
 void override_file(string filename, multimap<string, jb::Patient>& patients){
 	ofstream file;
 	file.open(filename);
+	if (!file.is_open()) {
+		throw jb::fileException();
+	}
 	patientIterator it = patients.begin();
 	file << it->second; //Write without newline
 	it++;
@@ -502,18 +534,19 @@ void override_file(string filename, multimap<string, jb::Patient>& patients){
 	}
 	file.close();
 }
+
 /*---------------------------------------------------------------------------------*/
 
 
 /*-------------------------------------STAFF ZONE-----------------------------------*/
 
+//Read doctors from database file
 void read_doctor_data(string name, multimap<string, jb::Doctor>& doctors) {
 	ifstream input;
 	string line;
 	input.open(name);
 	if (!input) {
-		cout << "Database file \"" << name << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
-		return;
+		throw jb::fileException();
 	}
 	else {
 
@@ -528,6 +561,7 @@ void read_doctor_data(string name, multimap<string, jb::Doctor>& doctors) {
 	input.close();
 }
 
+//Make a choice about doctors
 void s_records() {
 	multimap<string, jb::Doctor> doctors;
 	read_doctor_data("Doctors.txt", doctors);
@@ -566,6 +600,7 @@ void s_records() {
 	}
 };
 
+//Search a doctor of a given name
 void doctor_search(multimap<string, jb::Doctor>& doctors) {
 	system("cls");
 	cout << "Please enter the name of the doctor you wish to search for:" << endl;
@@ -588,6 +623,7 @@ void doctor_search(multimap<string, jb::Doctor>& doctors) {
 	system("pause");
 }
 
+//Print all doctor records
 void print_doctor_records(multimap<string, jb::Doctor>& doctors) {
 	system("cls");
 	for (auto itr = doctors.begin(); itr != doctors.end(); ++itr)
@@ -597,6 +633,7 @@ void print_doctor_records(multimap<string, jb::Doctor>& doctors) {
 	system("pause");
 }
 
+//Choice tree about manipulating doctor database
 void manip_doctors(multimap<string, jb::Doctor>& doctors) {
 	bool stop = false;
 	int choice = 0;
@@ -634,6 +671,10 @@ void manip_doctors(multimap<string, jb::Doctor>& doctors) {
 			catch (invalid_argument& e) {
 				cout << "Input incorrect!" << endl;
 				cout << e.what() << endl;
+				system("pause");
+			}
+			catch (jb::doctorSpecException& e) {
+				e.say();
 				system("pause");
 			}
 			break;
@@ -680,6 +721,7 @@ void manip_doctors(multimap<string, jb::Doctor>& doctors) {
 	}
 }
 
+//Add a single doctor from console input
 void add_doctor(multimap<string, jb::Doctor>& doctors) {
 	system("cls");
 	cout << "Please input the doctor data in the following order:" << endl;
@@ -708,6 +750,7 @@ void add_doctor(multimap<string, jb::Doctor>& doctors) {
 	}
 }
 
+//Add multiple doctors from file
 void add_many_doctors(multimap<string, jb::Doctor>& doctors) {
 	system("cls");
 	cout << "Please enter the filename from which you want to extract contents. To go back, please type exit" << endl;
@@ -754,6 +797,7 @@ void add_many_doctors(multimap<string, jb::Doctor>& doctors) {
 	}
 }
 
+//Remove a single doctor by name
 void remove_doctor(multimap<string, jb::Doctor>& doctors) {
 	system("cls");
 	cout << "Please enter the name of the doctor you wish to delete:" << endl;
@@ -815,16 +859,24 @@ void remove_doctor(multimap<string, jb::Doctor>& doctors) {
 	}
 }
 
+//Write a single doctor to file
 void write_to_file(string filename, jb::Doctor& doctor) {
 	ofstream file;
 	file.open(filename, std::ios::app);
+	if (!file.is_open()) {
+		throw jb::fileException();
+	}
 	file << "\n" << doctor;
 	file.close();
 }
 
+//Overwrite file
 void override_file(string filename, multimap<string, jb::Doctor>& doctors) {
 	ofstream file;
 	file.open(filename);
+	if (!file.is_open()) {
+		throw jb::fileException();
+	}
 	doctorIterator it = doctors.begin();
 	file << it->second; //Write without newline
 	it++;
@@ -835,17 +887,18 @@ void override_file(string filename, multimap<string, jb::Doctor>& doctors) {
 	file.close();
 }
 
+
 /*-----------------------------------------------------------------------------------*/
 
 
 /*--------------------------------------APPOINTMENT ZONE-----------------------------*/
+//Read appointments from database file
 void read_appointment_data(string filename, multimap<string, jb::Appointment>& appointments) {
 	ifstream input;
 	string line;
 	input.open(filename);
 	if (!input) {
-		cout << "Database file \"" << filename << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
-		return;
+		throw jb::fileException();
 	}
 	else {
 
@@ -854,6 +907,8 @@ void read_appointment_data(string filename, multimap<string, jb::Appointment>& a
 			if (line == "") {
 				continue;
 			}
+
+			out = split(line);
 
 			if (out.size() != 10) {
 				cout << "Not enough or too much information. An appointment:" << endl;
@@ -871,6 +926,7 @@ void read_appointment_data(string filename, multimap<string, jb::Appointment>& a
 	input.close();
 }
 
+//Make a choice about appointments
 void appointments() {
 	multimap<string, jb::Appointment> appointments;
 	read_appointment_data("Appointments.txt", appointments);
@@ -885,6 +941,8 @@ void appointments() {
 		cout << "4. Go back" << endl;
 
 		int input = 0;
+		buffer_flush();
+
 		cin >> input;
 
 		switch (input) {
@@ -908,6 +966,7 @@ void appointments() {
 	}
 }
 
+//Print all appointments
 void print_appointments(multimap<string, jb::Appointment>& appointments){
 	system("cls");
 	for (auto itr = appointments.begin(); itr != appointments.end(); ++itr)
@@ -917,6 +976,7 @@ void print_appointments(multimap<string, jb::Appointment>& appointments){
 	system("pause");
 }
 
+//Search an appointment of a patient of a given name
 void appointment_search(multimap<string, jb::Appointment>& appointments) {
 	system("cls");
 	cout << "Please enter the name of the patient for whose appointment you wish to search:" << endl;
@@ -939,6 +999,7 @@ void appointment_search(multimap<string, jb::Appointment>& appointments) {
 	system("pause");
 }
 
+//Choice tree about manipulating appointments database
 void manip_appointments(multimap<string, jb::Appointment>& appointments) {
 	bool stop = false;
 	int choice = 0;
@@ -961,6 +1022,10 @@ void manip_appointments(multimap<string, jb::Appointment>& appointments) {
 				e.say();
 				system("pause");
 			}
+			catch (jb::appointmentConflictException& e) {
+				e.say();
+				system("pause");
+			}
 			break;
 		case 2:
 			try {
@@ -975,8 +1040,9 @@ void manip_appointments(multimap<string, jb::Appointment>& appointments) {
 			try {
 				add_many_appointments(appointments);
 			}
-			catch (...) {
-
+			catch (jb::fileException &e) {
+				e.say();
+				system("pause");
 			}
 			break;
 		case 4:
@@ -991,6 +1057,7 @@ void manip_appointments(multimap<string, jb::Appointment>& appointments) {
 	}
 }
 
+//Add a single appointment consisting of data in Patient and Doctor databases
 void add_appointment(multimap<string, jb::Appointment>& appointments) {
 	system("cls");
 	cout << "Please type in the name of the patient you wish to schedule an appointment for:" << endl;
@@ -1013,8 +1080,17 @@ void add_appointment(multimap<string, jb::Appointment>& appointments) {
 
 	//Check if doctor is busy
 
+	
+
 	jb::Appointment newAppointment(p, dt, doc);
 
+
+	for (auto itr = appointments.begin(); itr != appointments.end(); ++itr)
+	{
+		if (itr->second == newAppointment) { //Check if the same patient is set for the same hour or doctor is busy at that hour
+			throw jb::appointmentConflictException();
+		}
+	}
 
 		appointments.insert(saPair(p.gName(), newAppointment));
 
@@ -1022,6 +1098,7 @@ void add_appointment(multimap<string, jb::Appointment>& appointments) {
 		write_to_file("Appointments.txt", newAppointment);
 	}
 
+//Remove a single appointment of a patient
 void remove_appointment(multimap<string, jb::Appointment>& appointments) {
 	system("cls");
 	cout << "Please enter the name of the patient whose appointment you wish to delete:" << endl;
@@ -1041,7 +1118,8 @@ void remove_appointment(multimap<string, jb::Appointment>& appointments) {
 		system("cls");
 		cout << endl << "Please select which one you'd like to remove" << endl;
 		for (appointmentIterator it = results.first; it != results.second; it++) {
-			cout << i << ". " << it->second << endl;
+			cout << i << ". ";
+			it->second.print_nicely();
 			i++;
 		}
 
@@ -1085,6 +1163,7 @@ void remove_appointment(multimap<string, jb::Appointment>& appointments) {
 	}
 }
 
+//Add multiple appointments from file
 void add_many_appointments(multimap<string, jb::Appointment>& appointments) {
 	system("cls");
 	cout << "Please enter the filename from which you want to extract contents. To go back, please type exit" << endl;
@@ -1099,12 +1178,12 @@ void add_many_appointments(multimap<string, jb::Appointment>& appointments) {
 		input.open(filename);
 
 		if (!input) {
-			cout << "Database file \"" << filename << "\" could not be opened. Please check if the file has the correct name and if the program has the rights to open it." << endl;
-			return;
+			throw jb::fileException();
 		}
 		else {
 			vector<string> out;
-
+			multimap <string, jb::Patient> patients;
+			read_patient_data("Patients.txt", patients);
 			while (getline(input, line)) {
 				if (line == "") {
 					continue;
@@ -1119,27 +1198,72 @@ void add_many_appointments(multimap<string, jb::Appointment>& appointments) {
 				}
 
 				jb::Appointment newAppointment(jb::Patient(out[0], out[1], out[2], out[3], jb::Pesel(out[4])), jb::Datetime(out[5]), jb::Doctor(out[6], out[7], out[8], out[9]));
+
+				
+
+				for (auto itr = appointments.begin(); itr != appointments.end(); ++itr)
+				{
+					if (itr->second == newAppointment) { //Check if the same patient is set for the same hour or doctor is busy at that hour
+						cout << "Patient or doctor is already scheduled for this hour. An appointment:" << endl;
+						newAppointment.print_nicely();
+						cout << "Will be ommited" << endl;
+						system("pause");
+					}
+				}
+				
+				
+
+				pair<patientIterator, patientIterator> results = patients.equal_range(out[0]);
+				if (results.first == results.second) { //This means that there is no patient of this name in the database and has to be inserted
+					jb::Patient newPatient(out[0], out[1], out[2], out[3], jb::Pesel(out[4]));
+
+					patients.insert(spPair(out[0], newPatient));
+					write_to_file("Patients.txt", newPatient);
+				}
+				else { //Search if it exists
+					bool exists = 0;
+					jb::Patient newPatient(out[0], out[1], out[2], out[3], jb::Pesel(out[4]));
+					for (patientIterator it = results.first; it != results.second; it++) {
+						if (it->second == newPatient) {
+							exists = true;
+						}
+					}
+					if (!exists) {
+						patients.insert(spPair(out[0], newPatient));
+						write_to_file("Patients.txt", newPatient);
+					}
+				}
+				
 				appointments.insert(saPair(out[0], newAppointment));
 
 				write_to_file("Appointments.txt", newAppointment);
 
 			}
-
+			cout << "Appointments created and saved to dabase!" << endl;
+			system("pause");
 		}
 		input.close();
 	}
 }
 
+//Write a single appointment to file
 void write_to_file(string filename, jb::Appointment& appointment) {
 	ofstream file;
 	file.open(filename, std::ios::app);
+	if (!file.is_open()) {
+		throw jb::fileException();
+	}
 	file << "\n" << appointment;
 	file.close();
 }
 
+//Overwrite file
 void override_file(string filename, multimap<string, jb::Appointment>& appointments) {
 	ofstream file;
 	file.open(filename);
+	if (!file.is_open()) {
+		throw jb::fileException();
+	}
 	appointmentIterator it = appointments.begin();
 	file << it->second; //Write without newline
 	it++;
@@ -1152,7 +1276,7 @@ void override_file(string filename, multimap<string, jb::Appointment>& appointme
 
 /*-----------------------------------------------------------------------------------*/
 
-
+//Starting menu
 void menu(bool& breaker) {
 
 	int input = 0;

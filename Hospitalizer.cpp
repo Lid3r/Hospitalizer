@@ -5,6 +5,7 @@
 #include "Appointment.h"
 #include "Functions.h"
 #include "Exceptions.h"
+#include <string>
 using namespace std;
 
 int main()
@@ -14,6 +15,7 @@ int main()
 		while (breaker) {
 			menu(breaker);
 		}
+		
 		
 	}
 	catch (jb::personNameException& e) {
@@ -35,6 +37,9 @@ int main()
 		e.say();
 	}
 	catch (jb::peselLettersException& e) {
+		e.say();
+	}
+	catch (jb::fileException& e) {
 		e.say();
 	}
 

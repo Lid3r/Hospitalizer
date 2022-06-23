@@ -34,6 +34,15 @@ namespace jb {
 			cout << "Date and time:" << endl << dt << endl;
 			cout << "Doctor:" << endl << doctor << endl << endl;
 		}
+
+		bool operator == (const Appointment& a) noexcept { //Check if patient has a collision between two times or if doctor is in two places at once
+			bool docdate;
+			bool patdate;
+			docdate = ((dt == a.dt) && (doctor == a.doctor));
+			patdate = (patient == a.patient) && (dt == a.dt);
+			
+			return docdate || patdate;
+		}
 	};
 
 	inline ostream& operator << (ostream& out, Appointment& a) {

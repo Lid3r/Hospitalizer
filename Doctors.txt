@@ -1,4 +1,5 @@
-Krzychu Ziobro, 420420420, 2137, Onkolog
-Krzychu Ziobro, 202020202, 2137, Radiolog
-Karol Trybek, 453678232, 21, Rakolog xD
-Macius, 453238211, 21, Obslugiwacz kawy
+Ludwig Van Mogenstern, 236784888, 33, Radiology
+Hans Van Mogenstern, 234544456, 22, Cardiology
+Pierre Van Mogenstern, 234444353, 44, General nurse
+Klaus Van Mogenstern, 112345432, 55, Toxicology
+Norbert Van Gajos, 234555346, 45, Head Physician
