@@ -5,3 +5,4 @@ Giancarlo Esposito, 234564786, 43, Breaking 23, 80041941971
 Samuel Jetstream, 234333654, 22, Northern Forks, 88081825545
 Steven Armstrong, 999867343, 44, Freedom Avenue 34, 04272334485
 John Kowalski, 453456777, 23, LA Road 23, 01312249833
+Karl Jakobs, 123444565, 12, Found Street 5, 59020766973

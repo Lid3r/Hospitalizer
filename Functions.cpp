@@ -7,8 +7,7 @@
 #include <map>
 #include <ctype.h>
 #include "Exceptions.h"
-//#include "Patient.h"
-//#include "Doctor.h"
+
 using namespace std;
 
 typedef pair<string, jb::Patient> spPair;
@@ -309,9 +308,20 @@ void manip_patients(multimap<string, jb::Patient>& patients) {
 				e.say();
 				system("pause");
 			}
+			catch (jb::datetimeDateException& e) {
+				e.say();
+				system("pause");
+			}
 			break;
 		case 2:
-			remove_patient(patients);
+			try {
+				remove_patient(patients);
+			}
+			catch (invalid_argument &e) {
+				cout << "Input incorrect!" << endl;
+				cout << e.what() << endl;
+				system("pause");
+			}
 			break;
 		case 3:
 			try {
@@ -339,6 +349,10 @@ void manip_patients(multimap<string, jb::Patient>& patients) {
 				system("pause");
 			}
 			catch (jb::peselDuplicateException& e) {
+				e.say();
+				system("pause");
+			}
+			catch (jb::datetimeDateException& e) {
 				e.say();
 				system("pause");
 			}
@@ -668,6 +682,10 @@ void manip_doctors(multimap<string, jb::Doctor>& doctors) {
 				e.say();
 				system("pause");
 			}
+			catch (jb::datetimeDateException& e) {
+				e.say();
+				system("pause");
+			}
 			catch (invalid_argument& e) {
 				cout << "Input incorrect!" << endl;
 				cout << e.what() << endl;
@@ -704,6 +722,10 @@ void manip_doctors(multimap<string, jb::Doctor>& doctors) {
 				system("pause");
 			}
 			catch (jb::personPhoneException& e) {
+				e.say();
+				system("pause");
+			}
+			catch (jb::datetimeDateException& e) {
 				e.say();
 				system("pause");
 			}
@@ -1026,6 +1048,10 @@ void manip_appointments(multimap<string, jb::Appointment>& appointments) {
 				e.say();
 				system("pause");
 			}
+			catch (jb::datetimeDateException& e) {
+				e.say();
+				system("pause");
+			}
 			break;
 		case 2:
 			try {
@@ -1041,6 +1067,14 @@ void manip_appointments(multimap<string, jb::Appointment>& appointments) {
 				add_many_appointments(appointments);
 			}
 			catch (jb::fileException &e) {
+				e.say();
+				system("pause");
+			}
+			catch (jb::appointmentConflictException& e) {
+				e.say();
+				system("pause");
+			}
+			catch (jb::datetimeDateException& e) {
 				e.say();
 				system("pause");
 			}
@@ -1206,8 +1240,9 @@ void add_many_appointments(multimap<string, jb::Appointment>& appointments) {
 					if (itr->second == newAppointment) { //Check if the same patient is set for the same hour or doctor is busy at that hour
 						cout << "Patient or doctor is already scheduled for this hour. An appointment:" << endl;
 						newAppointment.print_nicely();
-						cout << "Will be ommited" << endl;
+						cout << "Has caused a shutdown of the procedure. All previous appointments have been saved" << endl;
 						system("pause");
+						throw jb::appointmentConflictException();
 					}
 				}
 				
@@ -1285,9 +1320,8 @@ void menu(bool& breaker) {
 	cout << "Please select an operation:" << endl;
 	cout << "1. See patient records" << endl;
 	cout << "2. See staff records" << endl;
-	cout << "3. See all records" << endl;
-	cout << "4. See and schedule appointments" << endl;
-	cout << "5. Exit" << endl;
+	cout << "3. See and schedule appointments" << endl;
+	cout << "4. Exit" << endl;
 	cin >> input;
 
 	switch (input) {
@@ -1298,12 +1332,9 @@ void menu(bool& breaker) {
 		s_records();
 		break;
 	case 3:
-		
-		break;
-	case 4:
 		appointments();
 		break;
-	case 5:
+	case 4:
 		breaker = false;
 		break;
 	default:

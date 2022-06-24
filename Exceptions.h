@@ -98,6 +98,15 @@ namespace jb {
 		}
 	};
 
+	class datetimeException : public exception {};
+
+	class datetimeDateException : public datetimeException {
+	public:
+		void say() {
+			cout << "The date is incorrect! " << endl;
+		}
+	};
+
 	class appointmentException : public exception {};
 
 	class appointmentFailbitException : public appointmentException {

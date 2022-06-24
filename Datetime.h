@@ -19,8 +19,61 @@ namespace jb {
 	public:
 
 		Datetime(const string& dt) {
+			if (dt == "") {
+				throw jb::datetimeDateException();
+			}
+			
+			if (dt.length() < 15 || dt.length() > 16) {
+				throw jb::datetimeDateException();
+			}
+
+
+			int day = stoi(dt.substr(0, 2));
+			int month = stoi(dt.substr(3, 5));
+			int year = stoi(dt.substr(6, 10));
+			if (month > 0 && month < 13) {
+				if (month == 2) {
+					if (year % 4 == 0) {
+						if (day > 0 && day < 30) {
+						}
+						else {
+							throw jb::datetimeDateException();
+						}
+					}
+					else {
+						if (day > 0 && day < 29) {
+						}
+						else {
+							throw jb::datetimeDateException();
+						}
+					}
+				}
+				else {
+					if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+						if (day > 0 && day < 31) {
+						}
+						else {
+							throw jb::datetimeDateException();
+						}
+					}
+					else {
+						if (day > 0 && day < 30) {
+						}
+						else {
+							throw jb::datetimeDateException();
+						}
+					}
+				}
+			}
+			else {
+				throw jb::datetimeDateException();
+			}
+		
+			
+
 			//we assume the clinic is running from 8:00-20:00
 			original = dt;
+			
 			vector<string> tokdt = tokenize(dt, ' ');
 			//I'll think about wrong date logic
 

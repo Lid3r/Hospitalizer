@@ -1,7 +1,5 @@
 #include <iostream>
 #include <map>
-//#include "Patient.h"
-//#include "Doctor.h"
 #include "Appointment.h"
 #include "Functions.h"
 #include "Exceptions.h"
@@ -40,6 +38,9 @@ int main()
 		e.say();
 	}
 	catch (jb::fileException& e) {
+		e.say();
+	}
+	catch (jb::datetimeDateException& e) {
 		e.say();
 	}
 
