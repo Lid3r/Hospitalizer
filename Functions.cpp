@@ -729,6 +729,10 @@ void manip_doctors(multimap<string, jb::Doctor>& doctors) {
 				e.say();
 				system("pause");
 			}
+			catch (jb::doctorSpecException& e) {
+				e.say();
+				system("pause");
+			}
 			break;
 		case 4:
 			stop = true;
@@ -1320,8 +1324,9 @@ void menu(bool& breaker) {
 	cout << "Please select an operation:" << endl;
 	cout << "1. See patient records" << endl;
 	cout << "2. See staff records" << endl;
-	cout << "3. See and schedule appointments" << endl;
-	cout << "4. Exit" << endl;
+	cout << "3. See all records" << endl;
+	cout << "4. See and schedule appointments" << endl;
+	cout << "5. Exit" << endl;
 	cin >> input;
 
 	switch (input) {
@@ -1332,9 +1337,12 @@ void menu(bool& breaker) {
 		s_records();
 		break;
 	case 3:
-		appointments();
+		data_dump();
 		break;
 	case 4:
+		appointments();
+		break;
+	case 5:
 		breaker = false;
 		break;
 	default:
@@ -1344,4 +1352,58 @@ void menu(bool& breaker) {
 		system("pause");
 		break;
 	}
+}
+
+void data_dump(){
+	vector<jb::Person*> all;
+	vector<string> out;
+
+
+
+	ifstream input;
+	string line;
+	input.open("Patients.txt");
+	if (!input) {
+		throw jb::fileException();
+		return;
+	}
+	else {
+
+		
+		while (getline(input, line)) {
+			if (line == "") {
+				continue;
+			}
+			out = split(line);
+
+			all.push_back(new jb::Patient(out[0], out[1], out[2], out[3], jb::Pesel(out[4])));
+		}
+
+	}
+	input.close();
+
+	input.open("Doctors.txt");
+	if (!input) {
+		throw jb::fileException();
+	}
+	else {
+
+		
+		while (getline(input, line)) {
+			out = split(line);
+
+			all.push_back(new jb::Doctor(out[0], out[1], out[2], out[3]));
+		}
+
+	}
+	input.close();
+
+	for (vector<jb::Person*>::iterator i = all.begin(); i != all.end(); ++i)
+	{
+		(*i)->print();
+		delete* i;
+	}
+
+	system("pause");
+	
 }

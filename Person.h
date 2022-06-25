@@ -13,6 +13,10 @@ namespace jb {
 
 	public:
 		Person(const string& name, const string& phone, const string& age) : Name(name), Phone_number(phone), Age(stoi(age)) {
+			if (name == "") {
+				throw personNameException();
+			}
+
 			if (phone.length() != 9) {
 				throw personPhoneException();
 			}
@@ -42,15 +46,24 @@ namespace jb {
 			return Age;
 		}
 
+
 		//Check if string contains numbers
 		bool isNumeric(string const& str)
 		{
 			return find_if(str.begin(), str.end(), ::isdigit) != str.end();
 		}
+
+		virtual void print() = 0;
+
+		
 	};
 
+	
+
+	
 	inline ostream& operator << (ostream& out, Person& p) {
 		out << p.gName() << ", " << p.gPhone() << ", " << p.gAge();
 		return out;
 	}
+	
 }

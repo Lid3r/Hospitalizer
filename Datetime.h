@@ -27,7 +27,6 @@ namespace jb {
 				throw jb::datetimeDateException();
 			}
 
-
 			int day = stoi(dt.substr(0, 2));
 			int month = stoi(dt.substr(3, 5));
 			int year = stoi(dt.substr(6, 10));

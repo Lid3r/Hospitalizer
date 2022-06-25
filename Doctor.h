@@ -39,11 +39,14 @@ namespace jb {
 		bool operator == (const Doctor& doc) noexcept {
 			return ((Name == doc.Name) && (Phone_number == doc.Phone_number) && (Age == doc.Age) && (specialization == doc.specialization));
 		}
-
+		
 	};
+
+
 
 	inline ostream& operator << (ostream& out, Doctor& p) {
 		out << p.gName() << ", " << p.gPhone() << ", " << p.gAge() << ", " << p.gSpec();
 		return out;
 	}
+	
 }

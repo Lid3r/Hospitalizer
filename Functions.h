@@ -14,6 +14,7 @@ jb::Doctor return_doctor_from_search();
 
 void menu(bool& breaker);
 void buffer_flush();
+void data_dump();
 
 /*-------------------------------------PATIENT ZONE----------------------------------*/
 void p_records();
